@@ -1,11 +1,16 @@
 package colleselector
 
-var parentSeps = TraitMap[bool]{
+var parentSeps = traitMap[bool]{
 	false: {"->"},
 	true:  {"<-"},
 }
 
-func parseParent(sel string) (base string, result Trait[Parent]) {
+type parent struct {
+	Selector string
+	Rootwise bool
+}
+
+func parseParent(sel string) (base string, result trait[parent]) {
 	base = sel
 	if found, idx, rootwise, token := parentSeps.findLastOccurance(base); found {
 		result.Active = true

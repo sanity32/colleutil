@@ -2,12 +2,13 @@ package colleselector
 
 import "strings"
 
-var traitV = TraitMap[bool]{
+var traitV = traitMap[bool]{
 	true:  {":visible"},
 	false: {":notVisible", ":invisible"},
 }
 
-func parseTraitVisibility(sel string) (stripped string, result Trait[bool]) {
+func parseTraitVisibility[T ~string](selector T) (stripped string, result trait[bool]) {
+	sel := string(selector)
 	stripped = sel
 	if found, _, k, sep := traitV.findLastOccurance(sel); found {
 		a := strings.SplitN(sel, sep, 2)

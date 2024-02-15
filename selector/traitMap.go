@@ -2,9 +2,9 @@ package colleselector
 
 import "strings"
 
-type TraitMap[T comparable] map[T][]string
+type traitMap[T comparable] map[T][]string
 
-func (v TraitMap[T]) findAny(s string) (found bool, key T, token string) {
+func (v traitMap[T]) findAny(s string) (found bool, key T, token string) {
 	for k, needles := range v {
 		for _, needle := range needles {
 			if strings.Contains(s, needle) {
@@ -15,7 +15,7 @@ func (v TraitMap[T]) findAny(s string) (found bool, key T, token string) {
 	return
 }
 
-func (v TraitMap[T]) findLastOccurance(s string) (found bool, idx int, key T, token string) {
+func (v traitMap[T]) findLastOccurance(s string) (found bool, idx int, key T, token string) {
 	idxs := map[T]int{}
 	values := map[T]string{}
 	for k, needles := range v {

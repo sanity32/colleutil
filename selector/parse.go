@@ -1,8 +1,8 @@
 package colleselector
 
-func Parse(sel string) *Model {
+func Parse[T ~string](selector T) *Model {
 	result := Model{}
-	r := ParseLayer(sel)
+	r := parseToParentless(string(selector))
 	result.Selector = r.Selector
 	result.Contains = r.Contains
 	result.Visibility = r.Visibility
@@ -11,16 +11,4 @@ func Parse(sel string) *Model {
 		result.ParentIsRootwise = p.Data.Rootwise
 	}
 	return &result
-}
-
-func ParseLayer(sel string) ParentlessModel {
-	sel, parent := parseParent(sel)
-	sel, v := parseTraitVisibility(sel)
-	sel, contains := parseTraitContains(sel)
-	return ParentlessModel{
-		Selector:   sel,
-		Parent:     parent,
-		Visibility: v,
-		Contains:   contains,
-	}
 }

@@ -2,12 +2,17 @@ package colleselector
 
 import "strings"
 
-var traitContains = TraitMap[bool]{
+var traitContains = traitMap[bool]{
 	false: {":contains("},
 	true:  {":containsCs("},
 }
 
-func parseTraitContains(sel string) (stripped string, result Trait[Contains]) {
+type contains struct {
+	Contains      string
+	CaseSensitive bool
+}
+
+func parseTraitContains(sel string) (stripped string, result trait[contains]) {
 	stripped = sel
 	if found, cs, sep := traitContains.findAny(sel); found {
 		a := strings.SplitN(sel, sep, 2)
