@@ -15,14 +15,14 @@ func (m DeepModel) JSON() string {
 	return string(j)
 }
 
-func ParseDeep[T ~string](selector T) *DeepModel {
+func Deep[T ~string](selector T) *DeepModel {
 	result := DeepModel{}
 	r := Parse(string(selector))
 	result.Selector = r.Selector
 	result.Contains = r.Contains
 	result.Visibility = r.Visibility
 	if p := r.Parent; p.Active {
-		result.Parent = ParseDeep(p.Data.Selector)
+		result.Parent = Deep(p.Data.Selector)
 		result.ParentIsRootwise = p.Data.Rootwise
 	}
 	return &result
