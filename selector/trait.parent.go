@@ -1,4 +1,4 @@
-package colleselector
+package selector
 
 var parentSeps = traitMap[bool]{
 	false: {"->"},

@@ -1,4 +1,4 @@
-package colleoverwatch
+package overwatch
 
 import (
 	"fmt"

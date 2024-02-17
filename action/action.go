@@ -1,4 +1,4 @@
-package colleaction
+package action
 
 type Action[TOpts, TResp any] string
 

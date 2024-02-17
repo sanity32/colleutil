@@ -1,4 +1,4 @@
-package colleselector
+package selector
 
 type parentlessModel struct {
 	Selector   string

@@ -1,4 +1,4 @@
-package colleselector
+package selector
 
 func Parse[T ~string](selector T) *Model {
 	result := Model{}

@@ -1,4 +1,4 @@
-package colleaction
+package action
 
 type SetStyleRequest struct {
 	Styles []StyleRecord `json:"styles"`

@@ -1,4 +1,4 @@
-package colleaction
+package action
 
 type TimeoutVisualizerOpts struct {
 	Id          string `json:"id"`

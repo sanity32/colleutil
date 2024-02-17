@@ -1,4 +1,4 @@
-package colleaction
+package action
 
 type LocationInfoResp struct {
 	AncestorOrigins map[int]string `json:"ancestorOrigins"`

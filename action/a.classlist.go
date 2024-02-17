@@ -1,4 +1,4 @@
-package colleaction
+package action
 
 type UpdateClasslistOpts struct {
 	Action string `json:"action"` //"remove", "toggle" or "add" (DEFAULT)

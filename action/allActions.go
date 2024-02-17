@@ -1,4 +1,4 @@
-package colleaction
+package action
 
 import "github.com/sanity32/colleutil/rect"
 

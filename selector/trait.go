@@ -1,4 +1,4 @@
-package colleselector
+package selector
 
 type trait[T any] struct {
 	Active bool

@@ -1,4 +1,4 @@
-package colleselector
+package selector
 
 import "strings"
 

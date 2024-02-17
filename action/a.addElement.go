@@ -1,4 +1,4 @@
-package colleaction
+package action
 
 type Mark string
 

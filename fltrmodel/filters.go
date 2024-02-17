@@ -1,8 +1,8 @@
-package collefilters
+package fltrmodel
 
 import "fmt"
 
-type Filters struct {
+type Model struct {
 	IsVisible     bool   `json:"isVisible,omitempty"`
 	IsInvisible   bool   `json:"isInvisible,omitempty"`
 	Contains      string `json:"contains,omitempty"`
@@ -13,7 +13,7 @@ type Filters struct {
 	HasNot        string `json:"hasNot,omitempty"`
 }
 
-func (f Filters) ToString() string {
+func (f Model) ToString() string {
 	var visibility string
 	var contains string
 	var containsCs string
@@ -52,15 +52,15 @@ func (f Filters) ToString() string {
 	return "[" + visibility + contains + notContains + "]"
 }
 
-func FilterOnlyVisible() Filters {
-	return Filters{
+func OnlyVisible() Model {
+	return Model{
 		IsVisible:   true,
 		IsInvisible: false,
 	}
 }
 
-func FilterOnlyInisible() Filters {
-	return Filters{
+func OnlyInisible() Model {
+	return Model{
 		IsVisible:   false,
 		IsInvisible: true,
 	}

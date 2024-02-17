@@ -1,4 +1,4 @@
-package colleaction
+package action
 
 type SetValueOpts struct {
 	Key   string `json:"key"`

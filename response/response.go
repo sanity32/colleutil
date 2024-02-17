@@ -1,4 +1,4 @@
-package colleresponse
+package response
 
 import (
 	"encoding/json"
