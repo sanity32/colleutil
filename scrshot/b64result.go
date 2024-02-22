@@ -1,7 +1,9 @@
 package scrshot
 
 import (
+	"crypto/md5"
 	"encoding/base64"
+	"fmt"
 	"os"
 	"strings"
 )
@@ -75,4 +77,9 @@ func (b B64Result) RemovePrefixAll() B64Result {
 
 func (b B64Result) SaveB64Png(filename string) error {
 	return os.WriteFile(filename, b.Bytes(), 0644)
+}
+
+func (b B64Result) Md5Hash() string {
+	clean := b.RemovePrefixAll()
+	return fmt.Sprintf("%x", md5.Sum(clean.Bytes()))
 }
