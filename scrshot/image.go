@@ -36,6 +36,7 @@ func (i Image) ToBase64Jpg() B64Result {
 	return NewB64ResultFromBytes(i.ToJpeg())
 }
 
+// Why the heck did I coded this method??
 func (i Image) SaveJpeg(filename string, q ...int) error {
 	f, err := os.Create(filename)
 	if err != nil {
