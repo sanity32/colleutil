@@ -1,5 +1,7 @@
 package rect
 
+import "image"
+
 type Rect struct {
 	Ok           bool `json:"ok,omitempty"`
 	Top          int  `json:"top"`
@@ -28,4 +30,8 @@ func (r *Rect) SumWith(add Rect) {
 
 func (r Rect) IsVoid() bool {
 	return r.X == 0 && r.Y == 0 && r.Width == 0 && r.Height == 0
+}
+
+func (r Rect) Export() image.Rectangle {
+	return image.Rect(r.Left, r.Top, r.Right, r.Bottom)
 }
