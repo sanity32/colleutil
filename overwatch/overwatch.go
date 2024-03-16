@@ -25,7 +25,11 @@ func (r Result) SuccessFor(n int) bool {
 }
 
 func (r Result) Success() bool {
-	return !r.Err && !r.Interrupted
+	return !r.Err &&
+		!r.Interrupted &&
+		r.Result != OVERWATCH_ENCOUNTERED_ERROR &&
+		r.Result != OVERWATCH_HAS_NO_RESULTS &&
+		r.Result != OVERWATCH_IS_EXPIRED
 }
 
 type Overwatch struct {
