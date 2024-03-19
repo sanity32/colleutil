@@ -1,7 +1,6 @@
 package scrshot
 
 import (
-	"fmt"
 	"image"
 
 	"github.com/vova616/screenshot"
@@ -52,7 +51,6 @@ func (s *Screenshot) TakeXYWH(x, y, w, h int) error {
 func (s Screenshot) CropToXYWH(x, y, w, h int) Image {
 	min := image.Pt(x, y)
 	max := image.Pt(x+w, y+h)
-	fmt.Println("min", min, "max", max)
 	return NewImage(s.Source.SubImage(image.Rectangle{
 		Min: min,
 		Max: max,
