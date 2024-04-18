@@ -3,20 +3,23 @@ package scrshot
 import (
 	"image"
 
-	"github.com/vova616/screenshot"
+	"github.com/sanity32/lr"
 )
 
 type Screenshot struct {
-	Source  *image.RGBA
-	LastErr error
+	localresident *lr.Mgr
+	Source        *image.RGBA
+	LastErr       error
 }
 
-func NewScreenshotAll() (r Screenshot, err error) {
+func NewScreenshotAll(l *lr.Mgr) (r Screenshot, err error) {
+	r.localresident = l
 	r.TakeAll()
 	return r, r.LastErr
 }
 
-func NewScreenshotXYWH(x, y, w, h int) (r Screenshot, err error) {
+func NewScreenshotXYWH(l *lr.Mgr, x, y, w, h int) (r Screenshot, err error) {
+	r.localresident = l
 	err = r.TakeXYWH(x, y, w, h)
 	return
 }
@@ -34,13 +37,15 @@ func (s *Screenshot) Save(img *image.RGBA, err error) {
 }
 
 func (s *Screenshot) TakeAll() {
-	img, err := screenshot.CaptureScreen()
+	// img, err := screenshot.CaptureScreen()
+	img, err := s.localresident.Client().Screenshot()
 	s.Save(img, err)
 }
 
 func (s *Screenshot) TakeXYWH(x, y, w, h int) error {
 	rect := image.Rect(x, y, x+w, y+h)
-	img, err := screenshot.CaptureRect(rect)
+	// img, err := screenshot.CaptureRect(rect)
+	img, err := s.localresident.Client().ScreenshotRect(rect)
 	if err != nil {
 		return err
 	}
