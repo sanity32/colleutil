@@ -16,6 +16,7 @@ var (
 	Focus            Action[any, bool]                   = "focus"
 	GetStyle         Action[any, string]                 = "getStyle"
 	GetValue         Action[GetValueOpts, any]           = "getValue"
+	GetDataset       Action[GetValueOpts, any]           = "getDataset"
 	SetStyle         Action[SetStyleRequest, bool]       = "setStyle"
 	SetValue         Action[SetValueOpts, bool]          = "setValue"
 	SetMark          Action[Mark, Mark]                  = "setMark"
