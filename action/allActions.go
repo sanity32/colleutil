@@ -25,6 +25,7 @@ var (
 	DelDataset       Action[SetValueOpts, bool]          = "delDataset"
 	LocationInfo     Action[any, LocationInfoResp]       = "locationInfo"
 	Rect             Action[any, rect.Rect]              = "rect"
+	Remove           Action[any, bool]                   = "remove"
 	Text             Action[any, string]                 = "text"
 	ToViewport       Action[any, bool]                   = "toViewport"
 	TimeoutVisualise Action[TimeoutVisualizerOpts, bool] = "visualizeTimeout"
