@@ -5,6 +5,10 @@ import (
 	"math/rand"
 )
 
+func Centered() *Point {
+	return &Point{.5, .5}
+}
+
 type Point [2]float64
 
 func New(xy ...float64) *Point {
