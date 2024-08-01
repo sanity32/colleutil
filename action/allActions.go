@@ -14,7 +14,7 @@ var (
 	Click            Action[any, bool]                   = "click"
 	Count            Action[any, int]                    = "count"
 	Focus            Action[any, bool]                   = "focus"
-	GetStyle         Action[any, StyleString]            = "getStyle"
+	GetStyle         Action[any, string]                 = "getStyle"
 	GetValue         Action[GetValueOpts, any]           = "getValue"
 	SetStyle         Action[SetStyleRequest, bool]       = "setStyle"
 	SetValue         Action[SetValueOpts, bool]          = "setValue"
