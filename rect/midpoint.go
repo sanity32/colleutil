@@ -1,5 +1,7 @@
 package rect
 
+import "math/rand"
+
 // const (
 // 	DEFAULT_FACTOR_X = .5
 // 	DEFAULT_FACTOR_Y = .5
@@ -22,6 +24,14 @@ type MidPoint struct {
 	Factor [2]float64 // X,Y [0,1)
 	// SafeBorder     [2]float64
 	PreserveBorder bool
+}
+
+// x=.5 with spX=.2 x -> [.4,.6)
+func (m *MidPoint) SpreadFactor(spX, spY float64) {
+	rx := (rand.Float64() - .5) * spX
+	ry := (rand.Float64() - .5) * spY
+	m.Factor[0] = m.Factor[0] * rx
+	m.Factor[1] = m.Factor[1] * ry
 }
 
 // func (o MidPoint) fX() float64 {
