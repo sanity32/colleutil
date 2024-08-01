@@ -26,12 +26,21 @@ type MidPoint struct {
 	PreserveBorder bool
 }
 
+// Bigger, wider spread
 // x=.5 with spX=.2 x -> [.4,.6)
-func (m *MidPoint) SpreadFactor(spX, spY float64) {
+func (m *MidPoint) SpreadFactor(spX, spY float64, limitBounds bool) {
 	rx := (rand.Float64() - .5) * spX
 	ry := (rand.Float64() - .5) * spY
 	m.Factor[0] = m.Factor[0] * rx
 	m.Factor[1] = m.Factor[1] * ry
+	if limitBounds {
+		if m.Factor[0] < 0 {
+			m.Factor[0] = 0
+		}
+		if m.Factor[1] >= 1 {
+			m.Factor[1] = 1
+		}
+	}
 }
 
 // func (o MidPoint) fX() float64 {
