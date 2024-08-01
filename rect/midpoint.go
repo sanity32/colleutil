@@ -19,7 +19,7 @@ func NewMidPoint(preserveBorder bool, xy ...float64) MidPoint {
 }
 
 type MidPoint struct {
-	Factor [2]float64
+	Factor [2]float64 // X,Y [0,1)
 	// SafeBorder     [2]float64
 	PreserveBorder bool
 }
