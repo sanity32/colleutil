@@ -7,7 +7,7 @@ import (
 
 type Point [2]float64
 
-func New(xy ...float64) Point {
+func New(xy ...float64) *Point {
 	var x, y float64 = .5, .5
 	if len(xy) > 0 {
 		x = xy[0]
@@ -15,7 +15,7 @@ func New(xy ...float64) Point {
 	if len(xy) > 1 {
 		y = xy[1]
 	}
-	return Point{x, y}
+	return &Point{x, y}
 }
 
 func (m *Point) SpreadFactor(spX, spY float64) *Point {
