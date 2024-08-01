@@ -16,7 +16,10 @@ func (rect Rect) whlt(preserveBorder bool) (w, h, l, t float64) {
 	return
 }
 
-func (rect Rect) FindMidPoint(opts midpt.Point) (x, y int) {
+func (rect Rect) FindMidPoint(opts *midpt.Point) (x, y int) {
+	if opts == nil {
+		opts = midpt.Centered()
+	}
 	w, h, l, t := rect.whlt(true)
 	oX := w * opts[0]
 	oY := h * opts[1]
