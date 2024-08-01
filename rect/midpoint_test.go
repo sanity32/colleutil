@@ -21,3 +21,11 @@ func Test1(t *testing.T) {
 	x, y := r.FindMidPoint(m)
 	log.Println(x, y)
 }
+
+func TestSpread(t *testing.T) {
+	m := NewMidPoint(.25, .25)
+	t.Log(m)
+	// m.SpreadFactor(0.5, 0.5, 0.2, 0.2)
+	m.SpreadFactor(0.5, 0.5).SafeLimit(.25, .25, .75, .75)
+	t.Log(m)
+}

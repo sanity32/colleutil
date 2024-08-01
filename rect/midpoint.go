@@ -1,6 +1,9 @@
 package rect
 
-import "math/rand"
+import (
+	"log"
+	"math/rand"
+)
 
 // const (
 // 	DEFAULT_FACTOR_X = .5
@@ -9,7 +12,7 @@ import "math/rand"
 // 	DEFAULT_SAFE_Y   = .1
 // )
 
-func NewMidPoint(preserveBorder bool, xy ...float64) MidPoint {
+func NewMidPoint(xy ...float64) MidPoint {
 	var x, y float64 = .5, .5
 	if len(xy) > 0 {
 		x = xy[0]
@@ -17,30 +20,48 @@ func NewMidPoint(preserveBorder bool, xy ...float64) MidPoint {
 	if len(xy) > 1 {
 		y = xy[1]
 	}
-	return MidPoint{PreserveBorder: preserveBorder, Factor: [2]float64{x, y}}
+	return MidPoint{Factor: [2]float64{x, y}}
 }
 
 type MidPoint struct {
 	Factor [2]float64 // X,Y [0,1)
-	// SafeBorder     [2]float64
-	PreserveBorder bool
 }
 
 // Bigger, wider spread
 // x=.5 with spX=.2 x -> [.4,.6)
-func (m *MidPoint) SpreadFactor(spX, spY float64, limitBounds bool) {
-	rx := (rand.Float64() - .5) * spX
-	ry := (rand.Float64() - .5) * spY
-	m.Factor[0] = m.Factor[0] * rx
-	m.Factor[1] = m.Factor[1] * ry
-	if limitBounds {
-		if m.Factor[0] < 0 {
-			m.Factor[0] = 0
-		}
-		if m.Factor[1] >= 1 {
-			m.Factor[1] = 1
-		}
+// x=.1		spX=.4 ->	x=[0,.3)
+// x=.1		spX=.4	limX=.1	->	x=[.1,.3)
+func (m *MidPoint) SpreadFactor(spX, spY float64) *MidPoint {
+	rxx := (rand.Float64() - .5)
+	ryx := (rand.Float64() - .5)
+	rx := rxx * (spX)
+	ry := ryx * (spY)
+	m.Factor[0] += rx
+	m.Factor[1] += ry
+	return m
+}
+
+func (m *MidPoint) SafeLimit(lx0, ly0, lx1, ly1 float64) *MidPoint {
+	if lx0 > lx1 {
+		log.Fatalf("safe limit x0 (%v) > x1 (%v)", lx0, lx1)
 	}
+	if ly0 > ly1 {
+		log.Fatalf("safe limit y0 (%v) > y1 (%v)", ly0, ly1)
+	}
+
+	if m.Factor[0] < lx0 {
+		m.Factor[0] = lx0
+	}
+	if m.Factor[0] > lx1 {
+		m.Factor[0] = lx1
+	}
+	if m.Factor[1] < ly0 {
+		m.Factor[1] = ly0
+	}
+	if m.Factor[1] > ly1 {
+		m.Factor[1] = ly1
+	}
+	return m
 }
 
 // func (o MidPoint) fX() float64 {
