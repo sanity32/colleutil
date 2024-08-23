@@ -39,7 +39,7 @@ type Overwatch struct {
 	cbCheck            func(ctx context.Context) int
 	startedAt          time.Time
 	Expire             time.Duration
-	Cooldown           time.Duration
+	cooldown           time.Duration
 	Failures           int
 	MaxFailuresAllowed int
 	isFinalized        bool
@@ -63,7 +63,7 @@ func New(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Ove
 		cbCheck:            fn,
 		C:                  make(chan Result),
 		Expire:             timeout,
-		Cooldown:           cooldown,
+		cooldown:           cooldown,
 		MaxFailuresAllowed: DEFAULT_MAX_FAILURES_ALLOWED,
 		LoudPrints:         false,
 	}
@@ -71,6 +71,11 @@ func New(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Ove
 
 func (o *Overwatch) WithCtx(ctx context.Context) *Overwatch {
 	o.Context = ctx
+	return o
+}
+
+func (o *Overwatch) Cooldown(t time.Duration) *Overwatch {
+	o.cooldown = t
 	return o
 }
 
@@ -161,6 +166,6 @@ func (o *Overwatch) poll() (success bool, result int, interrupted bool) {
 			return true, OVERWATCH_IS_EXPIRED, false
 		}
 		o.printf("Gonna be expired at %v", o.expirationTime())
-		time.Sleep(o.Cooldown)
+		time.Sleep(o.cooldown)
 	}
 }
