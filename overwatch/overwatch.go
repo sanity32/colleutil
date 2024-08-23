@@ -48,6 +48,10 @@ type Overwatch struct {
 	LoudPrints         bool
 }
 
+func WithContext(ctx context.Context, fn func(ctx context.Context) int, cooldown time.Duration) *Overwatch {
+	return New(fn, time.Minute*10, cooldown).WithCtx(ctx)
+}
+
 func New(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Overwatch {
 	if timeout == 0 {
 		timeout = DEFAULT_TIMEOUT
