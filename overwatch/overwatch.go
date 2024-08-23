@@ -1,6 +1,7 @@
 package overwatch
 
 import (
+	"context"
 	"fmt"
 	"time"
 )
@@ -34,7 +35,8 @@ func (r Result) Success() bool {
 
 type Overwatch struct {
 	C                  chan Result
-	cbCheck            func() int
+	Context            context.Context
+	cbCheck            func(ctx context.Context) int
 	startedAt          time.Time
 	Expire             time.Duration
 	Cooldown           time.Duration
@@ -46,7 +48,7 @@ type Overwatch struct {
 	LoudPrints         bool
 }
 
-func New(fn func() int, timeout, cooldown time.Duration) *Overwatch {
+func New(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Overwatch {
 	if timeout == 0 {
 		timeout = DEFAULT_TIMEOUT
 	}
@@ -61,6 +63,11 @@ func New(fn func() int, timeout, cooldown time.Duration) *Overwatch {
 		MaxFailuresAllowed: DEFAULT_MAX_FAILURES_ALLOWED,
 		LoudPrints:         false,
 	}
+}
+
+func (o *Overwatch) WithCtx(ctx context.Context) *Overwatch {
+	o.Context = ctx
+	return o
 }
 
 func (o *Overwatch) finalize(result Result) {
@@ -110,8 +117,16 @@ func (o *Overwatch) Start() *Overwatch {
 
 func (o *Overwatch) poll() (success bool, result int, interrupted bool) {
 	var i int
+	ctx := o.Context
+	if ctx == nil {
+		newCtx, cancel := context.WithCancel(context.Background())
+		ctx = newCtx
+		defer cancel()
+	}
 	for {
 		select {
+		case <-ctx.Done():
+			o.stopFlag = true
 		case <-o.C:
 			o.stopFlag = true
 		default:
@@ -126,7 +141,7 @@ func (o *Overwatch) poll() (success bool, result int, interrupted bool) {
 			return true, -1, true
 		}
 
-		resp := o.cbCheck()
+		resp := o.cbCheck(ctx)
 		o.printf("resp: %#v\n", resp)
 		if resp >= 0 {
 			return true, resp, false
