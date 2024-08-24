@@ -34,7 +34,7 @@ func (r Result) Success() bool {
 }
 
 type Overwatch struct {
-	C                  chan Result
+	c                  chan Result
 	Context            context.Context
 	cbCheck            func(ctx context.Context) int
 	startedAt          time.Time
@@ -61,12 +61,19 @@ func New(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Ove
 	}
 	return &Overwatch{
 		cbCheck:            fn,
-		C:                  make(chan Result),
+		c:                  make(chan Result),
 		Expire:             timeout,
 		cooldown:           cooldown,
 		MaxFailuresAllowed: DEFAULT_MAX_FAILURES_ALLOWED,
 		LoudPrints:         false,
 	}
+}
+
+func (o *Overwatch) C() <-chan Result {
+	if o.c == nil {
+		o.c = make(chan Result)
+	}
+	return o.c
 }
 
 func (o *Overwatch) WithCtx(ctx context.Context) *Overwatch {
@@ -82,7 +89,7 @@ func (o *Overwatch) Cooldown(t time.Duration) *Overwatch {
 func (o *Overwatch) finalize(result Result) {
 	o.isFinalized = true
 	defer func() { recover() }()
-	o.C <- result
+	o.c <- result
 }
 
 func (o Overwatch) printf(s string, vv ...any) {
@@ -91,17 +98,17 @@ func (o Overwatch) printf(s string, vv ...any) {
 	}
 }
 
-func (o *Overwatch) Stop() {
-	if o.isFinalized {
-		o.printf("unable to stop, instance is already finalized")
-		return
-	}
-	o.stopFlag = true
-	o.printf("Placing a stop flag\n")
-	o.stopFlagReturnCh = make(chan any, 1)
-	<-o.stopFlagReturnCh
-	o.printf("Stopped!\n")
-}
+// func (o *Overwatch) Stop() {
+// 	if o.isFinalized {
+// 		o.printf("unable to stop, instance is already finalized")
+// 		return
+// 	}
+// 	o.stopFlag = true
+// 	o.printf("Placing a stop flag\n")
+// 	o.stopFlagReturnCh = make(chan any, 1)
+// 	<-o.stopFlagReturnCh
+// 	o.printf("Stopped!\n")
+// }
 
 func (o Overwatch) expirationTime() time.Time {
 	return o.startedAt.Add(o.Expire)
@@ -115,9 +122,6 @@ func (o *Overwatch) Start() *Overwatch {
 	o.startedAt = time.Now()
 	go func() {
 		success, r, interrupted := o.poll()
-		// if readyToSend := r >= 0; readyToSend {
-		// 	o.finalize(Result{Err: !success, Result: r, Interrupted: interrupted})
-		// }
 		o.finalize(Result{Err: !success, Result: r, Interrupted: interrupted})
 	}()
 
@@ -136,7 +140,7 @@ func (o *Overwatch) poll() (success bool, result int, interrupted bool) {
 		select {
 		case <-ctx.Done():
 			o.stopFlag = true
-		case <-o.C:
+		case <-o.c:
 			o.stopFlag = true
 		default:
 		}
@@ -144,9 +148,6 @@ func (o *Overwatch) poll() (success bool, result int, interrupted bool) {
 		i++
 		o.printf("Overwatch iteration #%v\n", i)
 		if o.stopFlag {
-			o.printf("Stopping!\n")
-			o.stopFlag = false
-			o.stopFlagReturnCh <- nil
 			return true, -1, true
 		}
 
