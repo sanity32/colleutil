@@ -38,21 +38,27 @@ type Overwatch struct {
 	Context            context.Context
 	cbCheck            func(ctx context.Context) int
 	startedAt          time.Time
-	Expire             time.Duration
+	expire             time.Duration
 	cooldown           time.Duration
 	Failures           int
 	MaxFailuresAllowed int
 	isFinalized        bool
 	stopFlag           bool
-	stopFlagReturnCh   chan any
 	LoudPrints         bool
 }
 
-func WithContext(ctx context.Context, fn func(ctx context.Context) int) *Overwatch {
-	return New(fn, time.Minute*10, DEFAULT_COOLDOWN).WithCtx(ctx)
+func New(ctx context.Context, fn func(ctx context.Context) int) *Overwatch {
+	r := Overwatch{
+		cbCheck: fn,
+		// c:                  make(chan Result),
+		MaxFailuresAllowed: DEFAULT_MAX_FAILURES_ALLOWED,
+	}
+	return r.Expire(DEFAULT_TIMEOUT).Cooldown(DEFAULT_COOLDOWN).WithCtx(ctx)
 }
 
-func New(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Overwatch {
+// Deprecated
+
+func NewOld(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Overwatch {
 	if timeout == 0 {
 		timeout = DEFAULT_TIMEOUT
 	}
@@ -62,7 +68,7 @@ func New(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Ove
 	return &Overwatch{
 		cbCheck:            fn,
 		c:                  make(chan Result),
-		Expire:             timeout,
+		expire:             timeout,
 		cooldown:           cooldown,
 		MaxFailuresAllowed: DEFAULT_MAX_FAILURES_ALLOWED,
 		LoudPrints:         false,
@@ -81,8 +87,13 @@ func (o *Overwatch) WithCtx(ctx context.Context) *Overwatch {
 	return o
 }
 
-func (o *Overwatch) Cooldown(t time.Duration) *Overwatch {
-	o.cooldown = t
+func (o *Overwatch) Cooldown(v time.Duration) *Overwatch {
+	o.cooldown = v
+	return o
+}
+
+func (o *Overwatch) Expire(v time.Duration) *Overwatch {
+	o.expire = v
 	return o
 }
 
@@ -111,7 +122,7 @@ func (o Overwatch) printf(s string, vv ...any) {
 // }
 
 func (o Overwatch) expirationTime() time.Time {
-	return o.startedAt.Add(o.Expire)
+	return o.startedAt.Add(o.expire)
 }
 
 func (o Overwatch) isExpired() bool {
