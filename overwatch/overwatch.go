@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	DefaultLoudPrintValue = true
+	DefaultLoudPrintValue = false
 	DefaultExpirationTime = time.Minute * 3
 	DefaultCooldown       = time.Second * 2
 )
