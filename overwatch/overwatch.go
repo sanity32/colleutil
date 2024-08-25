@@ -7,12 +7,16 @@ import (
 )
 
 const (
-	DEFAULT_TIMEOUT              time.Duration = time.Second * 60
-	DEFAULT_COOLDOWN             time.Duration = time.Second * 2
-	DEFAULT_MAX_FAILURES_ALLOWED int           = 3
-	OVERWATCH_ENCOUNTERED_ERROR  int           = -1
-	OVERWATCH_HAS_NO_RESULTS     int           = -2
-	OVERWATCH_IS_EXPIRED         int           = -3
+	DEFAULT_MAX_FAILURES_ALLOWED int = 3
+	OVERWATCH_ENCOUNTERED_ERROR  int = -1
+	OVERWATCH_HAS_NO_RESULTS     int = -2
+	OVERWATCH_IS_EXPIRED         int = -3
+)
+
+var (
+	DefaultLoudPrintValue = true
+	DefaultExpirationTime = time.Minute * 3
+	DefaultCooldown       = time.Second * 2
 )
 
 type Result struct {
@@ -48,22 +52,25 @@ type Overwatch struct {
 }
 
 func New(ctx context.Context, fn func(ctx context.Context) int) *Overwatch {
-	r := Overwatch{
+	return &Overwatch{
 		cbCheck: fn,
 		// c:                  make(chan Result),
 		MaxFailuresAllowed: DEFAULT_MAX_FAILURES_ALLOWED,
+		LoudPrints:         DefaultLoudPrintValue,
+		expire:             DefaultExpirationTime,
+		cooldown:           DefaultCooldown,
+		Context:            ctx,
 	}
-	return r.Expire(DEFAULT_TIMEOUT).Cooldown(DEFAULT_COOLDOWN).WithCtx(ctx)
 }
 
 // Deprecated
 
 func NewOld(fn func(ctx context.Context) int, timeout, cooldown time.Duration) *Overwatch {
 	if timeout == 0 {
-		timeout = DEFAULT_TIMEOUT
+		timeout = DefaultExpirationTime
 	}
 	if cooldown == 0 {
-		cooldown = DEFAULT_COOLDOWN
+		cooldown = DefaultCooldown
 	}
 	return &Overwatch{
 		cbCheck:            fn,
@@ -150,8 +157,10 @@ func (o *Overwatch) poll() (success bool, result int, interrupted bool) {
 	for {
 		select {
 		case <-ctx.Done():
+			o.printf("stopped by context: %s", ctx.Err())
 			o.stopFlag = true
 		case <-o.c:
+			o.printf("stopped by chan signal")
 			o.stopFlag = true
 		default:
 		}
