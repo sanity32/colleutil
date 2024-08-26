@@ -39,7 +39,7 @@ func (r Result) Success() bool {
 
 type Overwatch struct {
 	c                  chan Result
-	Context            context.Context
+	context            context.Context
 	cbCheck            func(ctx context.Context) int
 	startedAt          time.Time
 	expire             time.Duration
@@ -59,7 +59,7 @@ func New(ctx context.Context, fn func(ctx context.Context) int) *Overwatch {
 		LoudPrints:         DefaultLoudPrintValue,
 		expire:             DefaultExpirationTime,
 		cooldown:           DefaultCooldown,
-		Context:            ctx,
+		context:            ctx,
 	}
 }
 
@@ -90,7 +90,7 @@ func (o *Overwatch) C() <-chan Result {
 }
 
 func (o *Overwatch) WithCtx(ctx context.Context) *Overwatch {
-	o.Context = ctx
+	o.context = ctx
 	return o
 }
 
@@ -146,14 +146,23 @@ func (o *Overwatch) Start() *Overwatch {
 	return o
 }
 
+func (o *Overwatch) Context() context.Context {
+	if r := o.context; r != nil {
+		return r
+	}
+	return context.Background()
+}
+
 func (o *Overwatch) poll() (success bool, result int, interrupted bool) {
 	var i int
-	ctx := o.Context
-	if ctx == nil {
-		newCtx, cancel := context.WithCancel(context.Background())
-		ctx = newCtx
-		defer cancel()
-	}
+	// ctx := o.context
+	// if ctx == nil {
+	// 	newCtx, cancel := context.WithCancel(context.Background())
+	// 	ctx = newCtx
+	// 	defer cancel()
+	// }
+	ctx, cancel := context.WithCancel(o.Context())
+	defer cancel()
 	for {
 		select {
 		case <-ctx.Done():
