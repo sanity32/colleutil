@@ -1,6 +1,2 @@
-github.com/gorilla/css v1.0.1 h1:ntNaBIghp6JmvWnxbZKANoLyuXTPZ4cAMlo6RyhlbO8=
-github.com/gorilla/css v1.0.1/go.mod h1:BvnYkspnSzMmwRK+b8/xgNPLiIuNZr6vbZBTPQ2A3b0=
 github.com/sanity32/lr v0.0.0-20240418200253-cbeb0965dcf1 h1:LI2nl2nBw9ud0FrrtXupLBvj2Ung4IWfxbm8FGAcJqs=
 github.com/sanity32/lr v0.0.0-20240418200253-cbeb0965dcf1/go.mod h1:6vZR3k1rDjzp8MkvLZTkMwreCc9oX8TMaZFruLQeF3E=
-github.com/vanng822/css v1.0.1 h1:10yiXc4e8NI8ldU6mSrWmSWMuyWgPr9DZ63RSlsgDw8=
-github.com/vanng822/css v1.0.1/go.mod h1:tcnB1voG49QhCrwq1W0w5hhGasvOg+VQp9i9H1rCM1w=
